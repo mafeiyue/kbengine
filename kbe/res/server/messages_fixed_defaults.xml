@@ -77,6 +77,11 @@
 		<arg>UINT8_ARRAY</arg> <!-- 二进制流， 具体由开发者来解析 -->
 	</Loginapp::reqCreateMailAccount>
 	
+	<Loginapp::importClientSDK>
+		<id>7</id>
+		<descr>客户端SDK导出。</descr>
+	</Loginapp::importClientSDK>
+	
 	<Baseapp::hello>
 		<id>200</id>
 		<descr>hello。</descr>
@@ -125,7 +130,7 @@
 		<id>208</id>
 		<descr>客户端entitydef导出。</descr>
 	</Baseapp::importClientEntityDef>
-	
+
 	<Base::onRemoteMethodCall>
 		<id>301</id>
 		<descr>调用一个base远程方法。</descr>
@@ -212,7 +217,7 @@
 	<Client::onEntityEnterWorld>
 		<id>507</id>
 		<descr>一个entity进入世界(初次登录时第一个进入世界的是自己这个ENTITY， 其后理论是其他entity， 对比ID来判断)。
-			当有entity进入玩家的AOI时则会触发客户端这个接口。 (AOI: area of interest, 也可理解为服务器上可视范围)
+			当有entity进入玩家的View时则会触发客户端这个接口。 (View: area of interest, 也可理解为服务器上可视范围)
 		</descr>
 		<arg>INT32</arg> <!-- 进入世界的entityID int32 -->
 		<arg>UINT32</arg> <!-- spaceID uint32 -->
@@ -221,7 +226,7 @@
 	<Client::onEntityLeaveWorld>
 		<id>508</id>
 		<descr>一个entity进入世界(初次登录时第一个进入世界的是自己这个ENTITY， 其后理论是其他entity， 对比ID来判断)。
-			当有entity离开玩家的AOI时则会触发客户端这个接口。
+			当有entity离开玩家的View时则会触发客户端这个接口。
 		</descr>
 		<arg>INT32</arg> <!-- 进入世界的entityID int32 -->
 		<arg>UINT32</arg> <!-- spaceID uint32 -->
@@ -230,7 +235,7 @@
 	<Client::onEntityEnterSpace>
 		<id>509</id>
 		<descr>一个entity进入世界(初次登录时第一个进入世界的是自己这个ENTITY， 其后理论是其他entity， 对比ID来判断)。
-			当有entity进入玩家的AOI时则会触发客户端这个接口。 (AOI: area of interest, 也可理解为服务器上可视范围)
+			当有entity进入玩家的View时则会触发客户端这个接口。 (View: area of interest, 也可理解为服务器上可视范围)
 		</descr>
 		<arg>UINT32</arg> <!-- 一个场景的ID uint32-->
 		<arg>INT32</arg> <!-- 进入世界的entityID int32 -->
@@ -239,7 +244,7 @@
 	<Client::onEntityLeaveSpace>
 		<id>510</id>
 		<descr>一个entity进入世界(初次登录时第一个进入世界的是自己这个ENTITY， 其后理论是其他entity， 对比ID来判断)。
-			当有entity离开玩家的AOI时则会触发客户端这个接口。
+			当有entity离开玩家的View时则会触发客户端这个接口。
 		</descr>
 		<arg>UINT32</arg> <!-- 一个场景的ID uint32-->
 		<arg>INT32</arg> <!-- 进入世界的entityID int32 -->
@@ -459,6 +464,74 @@
 		<descr>查询cellapp中cell列表</descr>
 	</Cellapp::setSpaceViewer>
 
+	<Baseapp::onExecScriptCommand>
+		<id>55001</id>
+		<descr>console远程执行python语句。</descr>
+	</Baseapp::onExecScriptCommand>
 
+	<Cellapp::onExecScriptCommand>
+		<id>55002</id>
+		<descr>console远程执行python语句。</descr>
+	</Cellapp::onExecScriptCommand>
 
+	<Bots::onExecScriptCommand>
+		<id>55003</id>
+		<descr>console远程执行python语句。</descr>
+	</Bots::onExecScriptCommand>
+
+	<Baseapp::onAppActiveTick>
+		<id>55100</id>
+		<descr>心跳协议</descr>
+		<arg>INT32</arg>   <!-- COMPONENT_TYPE -->
+		<arg>UINT64</arg> <!-- COMPONENT_ID -->
+	</Baseapp::onAppActiveTick>
+
+	<Cellapp::onAppActiveTick>
+		<id>55101</id>
+		<descr>心跳协议</descr>
+		<arg>INT32</arg>   <!-- COMPONENT_TYPE -->
+		<arg>UINT64</arg> <!-- COMPONENT_ID -->
+	</Cellapp::onAppActiveTick>
+
+	<Cellappmgr::onAppActiveTick>
+		<id>55102</id>
+		<descr>心跳协议</descr>
+		<arg>INT32</arg>   <!-- COMPONENT_TYPE -->
+		<arg>UINT64</arg> <!-- COMPONENT_ID -->
+	</Cellappmgr::onAppActiveTick>
+
+	<Baseappmgr::onAppActiveTick>
+		<id>55103</id>
+		<descr>心跳协议</descr>
+		<arg>INT32</arg>   <!-- COMPONENT_TYPE -->
+		<arg>UINT64</arg> <!-- COMPONENT_ID -->
+	</Baseappmgr::onAppActiveTick>
+
+	<Interfaces::onAppActiveTick>
+		<id>55104</id>
+		<descr>心跳协议</descr>
+		<arg>INT32</arg>   <!-- COMPONENT_TYPE -->
+		<arg>UINT64</arg> <!-- COMPONENT_ID -->
+	</Interfaces::onAppActiveTick>
+
+	<Dbmgr::onAppActiveTick>
+		<id>55105</id>
+		<descr>心跳协议</descr>
+		<arg>INT32</arg>   <!-- COMPONENT_TYPE -->
+		<arg>UINT64</arg> <!-- COMPONENT_ID -->
+	</Dbmgr::onAppActiveTick>
+
+	<Loginapp::onAppActiveTick>
+		<id>55106</id>
+		<descr>心跳协议</descr>
+		<arg>INT32</arg>   <!-- COMPONENT_TYPE -->
+		<arg>UINT64</arg> <!-- COMPONENT_ID -->
+	</Loginapp::onAppActiveTick>
+
+	<Bots::onAppActiveTick>
+		<id>55107</id>
+		<descr>心跳协议</descr>
+		<arg>INT32</arg>   <!-- COMPONENT_TYPE -->
+		<arg>UINT64</arg> <!-- COMPONENT_ID -->
+	</Bots::onAppActiveTick>
 </root>

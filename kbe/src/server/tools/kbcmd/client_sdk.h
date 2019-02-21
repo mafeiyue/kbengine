@@ -1,22 +1,4 @@
-/*
-This source file is part of KBEngine
-For the latest info, see http://www.kbengine.org/
-
-Copyright (c) 2008-2017 KBEngine.
-
-KBEngine is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-KBEngine is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
- 
-You should have received a copy of the GNU Lesser General Public License
-along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// Copyright 2008-2018 Yolo Technologies, Inc. All Rights Reserved. https://www.comblockengine.com
 
 #ifndef KBE_CLIENT_SDK_H
 #define KBE_CLIENT_SDK_H
@@ -53,7 +35,7 @@ public:
 	virtual void onCreateEngineMessagesModuleFileName();
 	virtual void onCreateEntityDefsModuleFileName();
 	virtual void onCreateDefsCustomTypesModuleFileName();
-	virtual void onEntityMailboxModuleFileName(const std::string& moduleName);
+	virtual void onEntityCallModuleFileName(const std::string& moduleName);
 
 	virtual bool copyPluginsSourceToPath(const std::string& path);
 
@@ -78,14 +60,16 @@ public:
 	virtual bool writeEntityDefsModuleInitScript_MethodDescr(ScriptDefModule* pScriptDefModule, MethodDescription* pDescr, COMPONENT_TYPE componentType);
 	virtual bool writeEntityDefsModuleInitScript_PropertyDescr(ScriptDefModule* pScriptDefModule, PropertyDescription* pDescr);
 
-	bool writeEntityMailBox(ScriptDefModule* pScriptDefModule);
-	virtual bool writeEntityMailBoxBegin(ScriptDefModule* pScriptDefModule);
-	virtual bool writeEntityMailBoxEnd(ScriptDefModule* pScriptDefModule);
-	virtual bool writeEntityBaseMailBoxBegin(ScriptDefModule* pScriptDefModule);
-	virtual bool writeEntityBaseMailBoxEnd(ScriptDefModule* pScriptDefModule);
-	virtual bool writeEntityCellMailBoxBegin(ScriptDefModule* pScriptDefModule);
-	virtual bool writeEntityCellMailBoxEnd(ScriptDefModule* pScriptDefModule);
-	virtual bool writeEntityMailBoxMethod(ScriptDefModule* pScriptDefModule, MethodDescription* pMethodDescription, const char* fillString1, const char* fillString2, COMPONENT_TYPE componentType);
+	bool writeEntityCall(ScriptDefModule* pScriptDefModule);
+	virtual bool writeEntityCallBegin(ScriptDefModule* pScriptDefModule);
+	virtual bool writeEntityCallEnd(ScriptDefModule* pScriptDefModule);
+	virtual bool writeBaseEntityCallBegin(ScriptDefModule* pScriptDefModule);
+	virtual bool writeBaseEntityCallEnd(ScriptDefModule* pScriptDefModule);
+	virtual bool writeCellEntityCallBegin(ScriptDefModule* pScriptDefModule);
+	virtual bool writeCellEntityCallEnd(ScriptDefModule* pScriptDefModule);
+	virtual bool writeEntityCallMethodBegin(ScriptDefModule* pScriptDefModule, 
+		MethodDescription* pMethodDescription, const char* fillString1, const char* fillString2, COMPONENT_TYPE componentType);
+	virtual bool writeEntityCallMethodEnd(ScriptDefModule* pScriptDefModule, MethodDescription* pMethodDescription);
 
 	virtual bool writeEntityDefsModuleInitDefTypesBegin();
 	virtual bool writeEntityDefsModuleInitDefTypesEnd();
@@ -236,7 +220,7 @@ public:
 		return false;
 	}
 
-	virtual bool writeTypeItemType_MAILBOX(const std::string& itemName, const std::string& childItemName)
+	virtual bool writeTypeItemType_ENTITYCALL(const std::string& itemName, const std::string& childItemName)
 	{
 		return false;
 	}
@@ -254,6 +238,11 @@ public:
 
 	virtual bool writeEntityPropertys(ScriptDefModule* pEntityScriptDefModule,
 		ScriptDefModule* pCurrScriptDefModule);
+
+	virtual bool writeEntityPropertyComponent(ScriptDefModule* pEntityScriptDefModule,
+		ScriptDefModule* pCurrScriptDefModule, PropertyDescription* pPropertyDescription) {
+		return false;
+	}
 
 	virtual bool writeEntityProperty(ScriptDefModule* pEntityScriptDefModule,
 		ScriptDefModule* pCurrScriptDefModule, PropertyDescription* pPropertyDescription);
@@ -368,7 +357,7 @@ public:
 		return false;
 	}
 
-	virtual bool writeEntityProperty_MAILBOX(ScriptDefModule* pEntityScriptDefModule,
+	virtual bool writeEntityProperty_ENTITYCALL(ScriptDefModule* pEntityScriptDefModule,
 		ScriptDefModule* pCurrScriptDefModule, PropertyDescription* pPropertyDescription) {
 		return false;
 	}
@@ -387,9 +376,11 @@ public:
 	static ClientSDK* createClientSDK(const std::string& type);
 
 protected:
-	std::string basepath_, currpath_;
+	std::string basepath_, currSourcePath_, currHeaderPath_;
 	std::string sourcefileBody_;
 	std::string sourcefileName_;
+	std::string headerfileName_;
+	std::string headerfileBody_;
 };
 
 }

@@ -1,22 +1,4 @@
-/*
-This source file is part of KBEngine
-For the latest info, see http://www.kbengine.org/
-
-Copyright (c) 2008-2017 KBEngine.
-
-KBEngine is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-KBEngine is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
- 
-You should have received a copy of the GNU Lesser General Public License
-along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// Copyright 2008-2018 Yolo Technologies, Inc. All Rights Reserved. https://www.comblockengine.com
 
 #ifndef KBE_CLIENT_SDK_UNITY_H
 #define KBE_CLIENT_SDK_UNITY_H
@@ -43,7 +25,7 @@ public:
 	virtual void onCreateEngineMessagesModuleFileName();
 	virtual void onCreateEntityDefsModuleFileName();
 	virtual void onCreateDefsCustomTypesModuleFileName();
-	virtual void onEntityMailboxModuleFileName(const std::string& moduleName);
+	virtual void onEntityCallModuleFileName(const std::string& moduleName);
 
 	virtual bool writeServerErrorDescrsModuleBegin();
 	virtual bool writeServerErrorDescrsModuleErrDescr(int errorID, const std::string& errname, const std::string& errdescr);
@@ -68,13 +50,15 @@ public:
 	virtual bool writeCustomDataTypesEnd();
 	virtual bool writeCustomDataType(const DataType* pDataType);
 
-	virtual bool writeEntityMailBoxBegin(ScriptDefModule* pScriptDefModule);
-	virtual bool writeEntityMailBoxEnd(ScriptDefModule* pScriptDefModule);
-	virtual bool writeEntityBaseMailBoxBegin(ScriptDefModule* pScriptDefModule);
-	virtual bool writeEntityBaseMailBoxEnd(ScriptDefModule* pScriptDefModule);
-	virtual bool writeEntityCellMailBoxBegin(ScriptDefModule* pScriptDefModule);
-	virtual bool writeEntityCellMailBoxEnd(ScriptDefModule* pScriptDefModule);
-	virtual bool writeEntityMailBoxMethod(ScriptDefModule* pScriptDefModule, MethodDescription* pMethodDescription, const char* fillString1, const char* fillString2, COMPONENT_TYPE componentType);
+	virtual bool writeEntityCallBegin(ScriptDefModule* pScriptDefModule);
+	virtual bool writeEntityCallEnd(ScriptDefModule* pScriptDefModule);
+	virtual bool writeBaseEntityCallBegin(ScriptDefModule* pScriptDefModule);
+	virtual bool writeBaseEntityCallEnd(ScriptDefModule* pScriptDefModule);
+	virtual bool writeCellEntityCallBegin(ScriptDefModule* pScriptDefModule);
+	virtual bool writeCellEntityCallEnd(ScriptDefModule* pScriptDefModule);
+	virtual bool writeEntityCallMethodBegin(ScriptDefModule* pScriptDefModule, MethodDescription* pMethodDescription,
+		const char* fillString1, const char* fillString2, COMPONENT_TYPE componentType);
+	virtual bool writeEntityCallMethodEnd(ScriptDefModule* pScriptDefModule, MethodDescription* pMethodDescription);
 
 	virtual std::string typeToType(const std::string& type);
 	virtual bool getArrayType(DataType* pDataType, std::string& outstr);
@@ -115,7 +99,7 @@ public:
 	virtual bool writeTypeItemType_VECTOR2(const std::string& itemName, const std::string& childItemName);
 	virtual bool writeTypeItemType_VECTOR3(const std::string& itemName, const std::string& childItemName);
 	virtual bool writeTypeItemType_VECTOR4(const std::string& itemName, const std::string& childItemName);
-	virtual bool writeTypeItemType_MAILBOX(const std::string& itemName, const std::string& childItemName);
+	virtual bool writeTypeItemType_ENTITYCALL(const std::string& itemName, const std::string& childItemName);
 
 	virtual bool writeEntityModuleBegin(ScriptDefModule* pEntityScriptDefModule);
 	virtual bool writeEntityModuleEnd(ScriptDefModule* pEntityScriptDefModule);
@@ -124,6 +108,9 @@ public:
 	virtual bool writeEntityDefsModuleInitScriptEnd();
 
 	virtual bool writeEntityProcessMessagesMethod(ScriptDefModule* pEntityScriptDefModule);
+
+	virtual bool writeEntityPropertyComponent(ScriptDefModule* pEntityScriptDefModule,
+		ScriptDefModule* pCurrScriptDefModule, PropertyDescription* pPropertyDescription);
 
 	virtual bool writeEntityProperty_INT8(ScriptDefModule* pEntityScriptDefModule,
 		ScriptDefModule* pCurrScriptDefModule, PropertyDescription* pPropertyDescription);
@@ -191,7 +178,7 @@ public:
 	virtual bool writeEntityProperty_VECTOR4(ScriptDefModule* pEntityScriptDefModule,
 		ScriptDefModule* pCurrScriptDefModule, PropertyDescription* pPropertyDescription);
 
-	virtual bool writeEntityProperty_MAILBOX(ScriptDefModule* pEntityScriptDefModule,
+	virtual bool writeEntityProperty_ENTITYCALL(ScriptDefModule* pEntityScriptDefModule,
 		ScriptDefModule* pCurrScriptDefModule, PropertyDescription* pPropertyDescription);
 
 	virtual bool writeEntityMethod(ScriptDefModule* pEntityScriptDefModule,

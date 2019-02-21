@@ -1,22 +1,4 @@
-/*
-This source file is part of KBEngine
-For the latest info, see http://www.kbengine.org/
-
-Copyright (c) 2008-2017 KBEngine.
-
-KBEngine is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-KBEngine is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
- 
-You should have received a copy of the GNU Lesser General Public License
-along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// Copyright 2008-2018 Yolo Technologies, Inc. All Rights Reserved. https://www.comblockengine.com
 
 #include "resmgr.h"
 #include "helper/watcher.h"
@@ -168,13 +150,17 @@ bool Resmgr::initialize()
 		autoSetPaths();
 
 	updatePaths();
+
 	if(getPySysResPath() == "" || getPyUserResPath() == "" || getPyUserScriptsPath() == "")
 	{
-		printf("[ERROR] Resmgr::initialize: not set environment, (KBE_ROOT=%s, KBE_RES_PATH=%s, KBE_BIN_PATH=%s) invalid!\n", 
-			kb_env_.root_path.c_str(), kb_env_.res_path.c_str(), kb_env_.bin_path.c_str());
+		if (UNKNOWN_COMPONENT_TYPE != g_componentType && g_componentType != TOOL_TYPE)
+		{
+			printf("[ERROR] Resmgr::initialize: not set environment, (KBE_ROOT=%s, KBE_RES_PATH=%s, KBE_BIN_PATH=%s) invalid!\n",
+				kb_env_.root_path.c_str(), kb_env_.res_path.c_str(), kb_env_.bin_path.c_str());
 #if KBE_PLATFORM == PLATFORM_WIN32
-		::MessageBox(0, L"Resmgr::initialize: not set environment, (KBE_ROOT, KBE_RES_PATH, KBE_BIN_PATH) invalid!\n", L"ERROR", MB_ICONERROR);
+			::MessageBox(0, L"Resmgr::initialize: not set environment, (KBE_ROOT, KBE_RES_PATH, KBE_BIN_PATH) invalid!\n", L"ERROR", MB_ICONERROR);
 #endif
+		}
 	}
 
 	isInit_ = true;
@@ -456,7 +442,7 @@ std::string Resmgr::getPySysResPath()
 	{
 		respath = matchRes("server/kbengine_defaults.xml");
 		std::vector<std::string> tmpvec;
-		tmpvec = KBEngine::strutil::kbe_splits(respath, "server/kbengine_defaults.xml");
+		KBEngine::strutil::kbe_splits(respath, "server/kbengine_defaults.xml", tmpvec);
 
 		if(tmpvec.size() > 1)
 		{
@@ -481,7 +467,7 @@ std::string Resmgr::getPyUserResPath()
 	{
 		respath = matchRes("server/kbengine.xml");
 		std::vector<std::string> tmpvec;
-		tmpvec = KBEngine::strutil::kbe_splits(respath, "server/kbengine.xml");
+		KBEngine::strutil::kbe_splits(respath, "server/kbengine.xml", tmpvec);
 
 		if(tmpvec.size() > 1)
 		{
@@ -504,34 +490,79 @@ std::string Resmgr::getPyUserScriptsPath()
 {
 	static std::string path = "";
 
-	if(path == "")
+	if (path == "")
 	{
-		std::string entities_xml = "entities.xml";
-		path = matchRes(entities_xml);
+		path = getPyUserResPath();
 
-		if(path == entities_xml)
+		std::string::size_type pos = path.rfind("res");
+		path.erase(pos, path.size() - pos);
+		path += "scripts/";
+	}
+
+	return path;
+}
+
+//-------------------------------------------------------------------------------------
+std::string Resmgr::getPyUserComponentScriptsPath(COMPONENT_TYPE componentType)
+{
+	if (componentType == UNKNOWN_COMPONENT_TYPE)
+	{
+		static std::string path = "";
+
+		if (path == "")
 		{
-			entities_xml = "scripts/" + entities_xml;
-			path = matchRes(entities_xml);
-			entities_xml = "entities.xml";
+			path = getPyUserScriptsPath();
+
+			if (g_componentType == CELLAPP_TYPE)
+				path += "cell/";
+			else if (g_componentType == BASEAPP_TYPE)
+				path += "base/";
+			else if (g_componentType == BOTS_TYPE)
+				path += "bots/";
+			else if (g_componentType == CLIENT_TYPE)
+				path += "client/";
+			else
+				KBE_ASSERT(false);
 		}
 
+		return path;
+	}
+	else
+	{
+		std::string path = "";
 
-		std::vector<std::string> tmpvec;
-		tmpvec = KBEngine::strutil::kbe_splits(path, entities_xml);
-		if(tmpvec.size() > 1)
+		if (path == "")
 		{
-			path = tmpvec[0];
+			path = getPyUserScriptsPath();
+
+			if (componentType == CELLAPP_TYPE)
+				path += "cell/";
+			else if (componentType == BASEAPP_TYPE)
+				path += "base/";
+			else if (componentType == BOTS_TYPE)
+				path += "bots/";
+			else if (componentType == CLIENT_TYPE)
+				path += "client/";
+			else
+				KBE_ASSERT(false);
 		}
-		else
-		{
-			if(respaths_.size() > 2)
-				path = respaths_[2];
-			else if(respaths_.size() > 1)
-				path = respaths_[1];
-			else if(respaths_.size() > 0)
-				path = respaths_[0];
-		}
+
+		return path;
+	}
+
+	return "";
+}
+
+//-------------------------------------------------------------------------------------
+std::string Resmgr::getPyUserAssetsPath()
+{
+	static std::string path = "";
+
+	if (path == "")
+	{
+		path = getPyUserScriptsPath();
+		strutil::kbe_replace(path, "/scripts", "");
+		strutil::kbe_replace(path, "\\scripts", "");
 	}
 
 	return path;
